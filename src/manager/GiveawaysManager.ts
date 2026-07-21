@@ -1,14 +1,13 @@
 import { ChannelType, type Client, type TextChannel } from "discord.js";
-import { defaultEmbeds } from "./defaultEmbeds.js";
-import { GiveawayError } from "./errors/GiveawayError.js";
-import { Giveaway } from "./Giveaway.js";
-import { MemoryProvider } from "./providers/MemoryProvider.js";
-import type { GiveawaysProvider } from "./providers/Provider.js";
+import { defaultEmbeds } from "../embeds/index.js";
+import type { GiveawayEmbedFunction, GiveawayEmbeds } from "../embeds/index.js";
+import { GiveawayError } from "../errors/index.js";
+import { Giveaway } from "../giveaway/index.js";
+import type { GiveawayData } from "../giveaway/index.js";
+import { MemoryProvider } from "../providers/index.js";
+import type { GiveawaysProvider } from "../providers/index.js";
 import { TypedEventEmitter } from "./TypedEventEmitter.js";
 import type {
-  GiveawayData,
-  GiveawayEmbedFunction,
-  GiveawayEmbeds,
   GiveawaysManagerEvents,
   GiveawaysManagerOptions,
   RerollGiveawayOptions,
@@ -57,12 +56,13 @@ export class GiveawaysManager extends TypedEventEmitter<GiveawaysManagerEvents> 
     }, this.checkIntervalMs);
   }
 
-  /** Stops the auto-end loop so the process can exit cleanly. */
-  public stop(): void {
+  /** Stops the auto-end loop and releases the provider's resources (DB connections, ...). */
+  public async stop(): Promise<void> {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
+    await this.provider.dispose?.();
   }
 
   /** All giveaways known to this manager, active and ended — the base for a full history view. */

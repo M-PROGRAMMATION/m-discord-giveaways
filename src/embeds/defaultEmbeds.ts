@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import type { Giveaway } from "./Giveaway.js";
+import type { Giveaway } from "../giveaway/index.js";
 import type { GiveawayEmbeds } from "./types.js";
 
 const startEmbed: GiveawayEmbeds["start"] = (giveaway: Giveaway) =>

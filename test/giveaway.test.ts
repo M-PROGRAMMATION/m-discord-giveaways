@@ -1,7 +1,7 @@
 import type { Client } from "discord.js";
 import { describe, expect, it } from "vitest";
 import { Giveaway, GiveawayError, GiveawaysManager, MemoryProvider } from "../src/index.js";
-import type { GiveawayData } from "../src/types.js";
+import type { GiveawayData } from "../src/index.js";
 
 const baseData: GiveawayData = {
   messageId: "1",

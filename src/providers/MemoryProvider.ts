@@ -1,4 +1,4 @@
-import type { GiveawayData } from "../types.js";
+import type { GiveawayData } from "../giveaway/index.js";
 import type { GiveawaysProvider } from "./Provider.js";
 
 /**

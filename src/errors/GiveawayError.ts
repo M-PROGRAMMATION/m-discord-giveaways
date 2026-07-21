@@ -3,7 +3,10 @@ export type GiveawayErrorCode =
   | "GIVEAWAY_ALREADY_ENDED"
   | "CHANNEL_NOT_FOUND"
   | "MESSAGE_NOT_FOUND"
-  | "INVALID_OPTIONS";
+  | "INVALID_OPTIONS"
+  | "DATABASE_CONNECTION_FAILED"
+  | "DATABASE_SETUP_FAILED"
+  | "DATABASE_NOT_READY";
 
 export class GiveawayError extends Error {
   public readonly code: GiveawayErrorCode;

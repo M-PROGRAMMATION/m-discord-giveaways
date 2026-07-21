@@ -15,8 +15,9 @@ A [discord.js](https://discord.js.org) module for running advanced giveaways: fu
 - ✅ Automatic ending when a giveaway expires
 - ✅ Reaction-based entries, configurable emoji
 - ✅ 100% TypeScript, typed events
-- ✅ Pluggable storage (`GiveawaysProvider`) so you can plug in your own database and keep a complete history
-- 🔜 Advanced history/queries, official providers, ready-to-use commands
+- ✅ Built-in SQL storage (`SqlProvider`): SQLite, MySQL, MariaDB, Postgres — connected, verified and cached automatically on startup
+- ✅ Pluggable storage (`GiveawaysProvider`) so you can plug in any other database and keep a complete history
+- 🔜 Advanced history/queries, ready-to-use commands
 
 ## Installation
 
@@ -62,16 +63,16 @@ giveaways.on("giveawayEnd", (giveaway, winners) => {
 
 ### `GiveawaysManager`
 
-| Method                        | Description                                                 |
-| ----------------------------- | ----------------------------------------------------------- |
-| `init()`                      | Loads giveaways from the provider, starts the auto-end loop |
-| `start(options)`              | Creates and posts a new giveaway                            |
-| `end(messageId)`              | Ends a giveaway and draws the winners                       |
-| `reroll(messageId, options?)` | Draws one or more new winners                               |
-| `delete(messageId)`           | Removes a giveaway from the provider and the cache          |
-| `get(messageId)`              | Retrieves a giveaway by its message ID                      |
-| `getAll()`                    | All known giveaways (active and ended)                      |
-| `stop()`                      | Stops the automatic end-checking loop                       |
+| Method                        | Description                                                   |
+| ----------------------------- | ------------------------------------------------------------- |
+| `init()`                      | Loads giveaways from the provider, starts the auto-end loop   |
+| `start(options)`              | Creates and posts a new giveaway                              |
+| `end(messageId)`              | Ends a giveaway and draws the winners                         |
+| `reroll(messageId, options?)` | Draws one or more new winners                                 |
+| `delete(messageId)`           | Removes a giveaway from the provider and the cache            |
+| `get(messageId)`              | Retrieves a giveaway by its message ID                        |
+| `getAll()`                    | All known giveaways (active and ended)                        |
+| `stop()`                      | Stops the auto-end loop and releases the provider's resources |
 
 ### Events
 
@@ -94,12 +95,63 @@ const giveaways = new GiveawaysManager(client, {
 
 ## Persistence & history
 
-By default, `GiveawaysManager` uses a `MemoryProvider` (in-memory, not persistent — handy for testing, but everything is lost on restart). To keep a complete history, implement the `GiveawaysProvider` interface (JSON, SQLite, Postgres, Redis, ...) and pass it to the manager:
+By default, `GiveawaysManager` uses a `MemoryProvider` (in-memory, not persistent — handy for testing, but everything is lost on restart).
+
+### Built-in SQL provider (SQLite, MySQL, MariaDB, Postgres)
+
+`SqlProvider` covers all four out of the box. Pick a dialect and pass it to the manager — on `giveaways.init()` it opens the connection, runs a clean connectivity check (a `SELECT 1`, wrapped in a clear `GiveawayError` if it fails), creates the `giveaways` table if it doesn't exist yet, and warms up an in-memory cache so reads never hit the database again:
+
+```ts
+import { GiveawaysManager, SqlProvider } from "@m-programmation/discord-giveaways";
+
+// SQLite (local file)
+const provider = new SqlProvider({ dialect: "sqlite", filename: "./data/giveaways.sqlite" });
+
+// MySQL / MariaDB
+// const provider = new SqlProvider({
+//   dialect: "mysql", // or "mariadb"
+//   host: "localhost",
+//   port: 3306,
+//   user: "bot",
+//   password: "secret",
+//   database: "giveaways",
+// });
+
+// Postgres
+// const provider = new SqlProvider({
+//   dialect: "postgres",
+//   host: "localhost",
+//   port: 5432,
+//   user: "bot",
+//   password: "secret",
+//   database: "giveaways",
+// });
+
+const giveaways = new GiveawaysManager(client, { provider });
+
+client.once("ready", async () => {
+  await giveaways.init(); // connects, checks the connection, migrates, warms the cache
+});
+```
+
+`SqlProvider` is built on [Knex](https://knexjs.org) and only requires the driver matching your dialect as a peer dependency: `better-sqlite3` for SQLite, `mysql2` for MySQL/MariaDB, `pg` for Postgres.
+
+```bash
+npm install better-sqlite3   # sqlite
+npm install mysql2           # mysql / mariadb
+npm install pg               # postgres
+```
+
+Call `await giveaways.stop()` on shutdown to close the underlying connection cleanly.
+
+### Custom providers
+
+To plug in anything else (a different ORM, Redis, a REST backend, ...), implement the `GiveawaysProvider` interface and pass it to the manager:
 
 ```ts
 import type { GiveawaysProvider } from "@m-programmation/discord-giveaways";
 
-const provider: GiveawaysProvider = {/* getAll, create, update, delete */};
+const provider: GiveawaysProvider = {/* init?, getAll, create, update, delete, dispose? */};
 
 const giveaways = new GiveawaysManager(client, { provider });
 ```

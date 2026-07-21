@@ -44,7 +44,11 @@
     "discord.js",
     "giveaway",
     "giveaways",
-    "bot"
+    "bot",
+    "sqlite",
+    "mysql",
+    "mariadb",
+    "postgres"
   ],
   "author": "M-PROGRAMMATION",
   "license": "Apache-2.0",
@@ -57,14 +61,38 @@
   },
   "homepage": "https://github.com/M-PROGRAMMATION/m-discord-giveaways#readme",
   "peerDependencies": {
-    "discord.js": "^14.14.0"
+    "better-sqlite3": "^13.0.0",
+    "discord.js": "^14.14.0",
+    "knex": "^3.0.0",
+    "mysql2": "^3.0.0",
+    "pg": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "better-sqlite3": {
+      "optional": true
+    },
+    "knex": {
+      "optional": true
+    },
+    "mysql2": {
+      "optional": true
+    },
+    "pg": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.10.5",
+    "@types/pg": "^8.20.0",
+    "better-sqlite3": "^13.0.1",
     "discord.js": "^14.16.3",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.0",
+    "knex": "^3.3.0",
+    "mysql2": "^3.23.1",
+    "pg": "^8.22.0",
     "prettier": "^3.4.2",
     "tsup": "^8.5.1",
     "typescript": "^5.7.3",
