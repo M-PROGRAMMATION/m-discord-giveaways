@@ -1,6 +1,6 @@
 {
   "name": "@m-programmation/discord-giveaways",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A powerful, extensible Discord giveaways module with fully customizable embeds and complete history tracking.",
   "type": "module",
   "main": "./dist/index.cjs",
