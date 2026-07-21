@@ -1,5 +1,10 @@
 # @m-programmation/discord-giveaways
 
+<p align="center">
+  <img src="/assets/banner.png" width="600" alt="MARK — Développe tes idées !" />
+</p>
+
+
 [![npm version](https://img.shields.io/npm/v/@m-programmation/discord-giveaways.svg)](https://www.npmjs.com/package/@m-programmation/discord-giveaways)
 [![npm downloads](https://img.shields.io/npm/dm/@m-programmation/discord-giveaways.svg)](https://www.npmjs.com/package/@m-programmation/discord-giveaways)
 [![license](https://img.shields.io/npm/l/@m-programmation/discord-giveaways.svg)](LICENSE)

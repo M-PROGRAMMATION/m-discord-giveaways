@@ -36,7 +36,10 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Ensure npm supports trusted publishing (>=11.5.1)
-        run: npm install -g npm@latest
+        # Pinned to the 11.x line on purpose: npm 12 blocks native modules'
+        # install scripts by default (better-sqlite3 fails to build), while
+        # 11.x only warns and still runs them.
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: npm ci
