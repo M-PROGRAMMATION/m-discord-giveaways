@@ -41,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Rebuild better-sqlite3 from source (guards against flaky prebuild downloads)
+        run: npm rebuild better-sqlite3 --build-from-source
+
       - name: Test
         run: npm test
 
